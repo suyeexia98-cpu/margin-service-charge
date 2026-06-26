@@ -458,6 +458,195 @@
       white-space: normal;
     }
 
+    .page-title-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .settings-open-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 7px 10px;
+      border: 1px solid var(--our-red-border);
+      border-radius: 7px;
+      background: #fff1f0;
+      color: var(--our-red);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 780;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .settings-color-block {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      background: var(--our-red);
+      box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.12);
+    }
+
+    .settings-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+    }
+
+    .settings-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.36);
+      backdrop-filter: blur(2px);
+    }
+
+    .settings-dialog {
+      position: absolute;
+      left: clamp(14px, 4vw, 52px);
+      top: 50%;
+      display: flex;
+      flex-direction: column;
+      width: min(560px, calc(100vw - 28px));
+      max-height: calc(100vh - 48px);
+      overflow: hidden;
+      transform: translateY(-50%);
+      border: 1px solid var(--our-red-border);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 24px 72px rgba(18, 31, 56, 0.24);
+    }
+
+    .settings-dialog-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px;
+      background: #fff1f0;
+      border-bottom: 1px solid var(--our-red-border);
+    }
+
+    .settings-dialog-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .settings-dialog-title h3 {
+      margin: 0;
+      color: var(--our-red);
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .settings-dialog-title p {
+      margin: 2px 0 0;
+      color: #667085;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .settings-close {
+      width: 34px;
+      height: 34px;
+      border: 1px solid #fecaca;
+      border-radius: 7px;
+      background: #fff;
+      color: var(--our-red);
+      font: inherit;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .settings-body {
+      display: grid;
+      gap: 14px;
+      padding: 14px;
+      overflow-y: auto;
+      background: #fff;
+    }
+
+    .settings-group {
+      display: grid;
+      gap: 10px;
+    }
+
+    .settings-group h3 {
+      margin: 0;
+      color: #344054;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .setting-field label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .setting-field input,
+    .setting-field select {
+      min-height: 38px;
+      font-size: 13px;
+    }
+
+    .settings-tier-head,
+    .settings-tier-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .settings-tier-head {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .settings-tier-row + .settings-tier-row {
+      margin-top: 8px;
+    }
+
+    .tier-label {
+      color: #344054;
+      font-size: 12px;
+      font-weight: 720;
+    }
+
+    .settings-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding-top: 2px;
+    }
+
+    .secondary-btn {
+      min-height: 36px;
+      padding: 7px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #fff;
+      color: #344054;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 720;
+      cursor: pointer;
+    }
+
     .results {
       display: grid;
       gap: 18px;
@@ -710,7 +899,7 @@
         display: block;
       }
 
-      .page-title span {
+      .page-title > span {
         display: block;
         margin-top: 6px;
         text-align: left;
@@ -791,6 +980,28 @@
 
       .coef-list {
         grid-template-columns: 1fr;
+      }
+
+      .page-title-left {
+        margin-bottom: 8px;
+      }
+
+      .settings-dialog {
+        left: 10px;
+        top: 10px;
+        width: calc(100vw - 20px);
+        max-height: calc(100vh - 20px);
+        transform: none;
+      }
+
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .settings-tier-head,
+      .settings-tier-row {
+        grid-template-columns: 58px 1fr 1fr;
+        gap: 6px;
       }
     }
 
@@ -902,8 +1113,14 @@
 
     <section class="page-block active" data-view-panel="rules" aria-label="规则说明">
       <div class="page-title">
-        <h2>规则说明</h2>
-        <span>适用范围：协议数量不超过50份，年度交易/估值处理量不超过5000笔。</span>
+        <div class="page-title-left">
+          <button type="button" class="settings-open-btn" id="settingsToggle" aria-expanded="false">
+            <span class="settings-color-block" aria-hidden="true"></span>
+            参数设置
+          </button>
+          <h2>规则说明</h2>
+        </div>
+        <span id="scopeSummary">适用范围：协议数量不超过50份，年度交易/估值处理量不超过5000笔。</span>
       </div>
 
       <div class="rules-grid">
@@ -920,13 +1137,13 @@
             <tbody>
               <tr>
                 <td class="left">协议数量</td>
-                <td>50份以内</td>
-                <td>超过50份时另行评估</td>
+                <td id="scopeAgreementLimit">50份以内</td>
+                <td id="scopeAgreementOverflow">超过50份时另行评估</td>
               </tr>
               <tr>
                 <td class="left">交易/估值处理量</td>
-                <td>5000笔以内</td>
-                <td>超过5000笔时另行评估</td>
+                <td id="scopeTradeLimit">5000笔以内</td>
+                <td id="scopeTradeOverflow">超过5000笔时另行评估</td>
               </tr>
             </tbody>
           </table>
@@ -938,36 +1155,23 @@
           <ul class="rule-list">
             <li>
               <strong>计算公式</strong>
-              <span class="formula-chip">M = 500万元 × P × V × C</span>
+              <span class="formula-chip" id="formulaChipRule">M = 500万元 × P × V × C</span>
             </li>
             <li>
               <strong>协议覆盖系数 P</strong>
-              <div class="coef-list">
-                <div class="coef-item"><span>1-10份</span><b>0.8</b></div>
-                <div class="coef-item"><span>11-20份</span><b>1.0</b></div>
-                <div class="coef-item"><span>21-30份</span><b>1.2</b></div>
-                <div class="coef-item"><span>31-50份</span><b>1.5</b></div>
-              </div>
+              <div class="coef-list" id="pRuleCoefList"></div>
             </li>
             <li>
               <strong>估值活跃系数 V</strong>
-              <div class="coef-list">
-                <div class="coef-item"><span>1000笔以内</span><b>1.2</b></div>
-                <div class="coef-item"><span>1001-2000笔</span><b>1.6</b></div>
-                <div class="coef-item"><span>2001-3000笔</span><b>2.0</b></div>
-                <div class="coef-item"><span>3001-5000笔</span><b>2.5</b></div>
-              </div>
+              <div class="coef-list" id="vRuleCoefList"></div>
             </li>
             <li>
               <strong>产品复杂系数 C</strong>
-              <div class="coef-list">
-                <div class="coef-item"><span>简单产品</span><b>1.0</b></div>
-                <div class="coef-item"><span>含复杂衍生品</span><b>2.5</b></div>
-              </div>
+              <div class="coef-list" id="cRuleCoefList"></div>
             </li>
             <li>
               <strong>取整方式</strong>
-              年日均存款按100万元向下取整
+              <span id="roundingRuleText">年日均存款按100万元向下取整</span>
             </li>
           </ul>
         </div>
@@ -979,21 +1183,18 @@
             <li>
               <strong>首次接入</strong>
               <div class="coef-list">
-                <div class="coef-item"><span>首次接入费</span><b>2.4万元</b></div>
+                <div class="coef-item"><span>首次接入费</span><b id="fhtSetupRule">2.4万元</b></div>
               </div>
             </li>
             <li>
               <strong>协议费用</strong>
               <div class="coef-list">
-                <div class="coef-item"><span>每份协议</span><b>0.2万元</b></div>
+                <div class="coef-item"><span>每份协议</span><b id="fhtAgreementRule">0.2万元</b></div>
               </div>
             </li>
             <li>
               <strong>估值费用</strong>
-              <div class="coef-list">
-                <div class="coef-item"><span>简单估值</span><b>2万元/千笔</b></div>
-                <div class="coef-item"><span>复杂估值</span><b>8万元/千笔</b></div>
-              </div>
+              <div class="coef-list" id="fhtValuationRuleList"></div>
             </li>
             <li>
               <strong>计费规则</strong>
@@ -1002,6 +1203,143 @@
               </div>
             </li>
           </ul>
+        </div>
+
+        <div class="settings-modal hidden" id="settingsBody" aria-hidden="true">
+          <div class="settings-backdrop" data-close-settings></div>
+          <section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsDialogTitle">
+            <div class="settings-dialog-head">
+              <div class="settings-dialog-title">
+                <span class="settings-color-block" aria-hidden="true"></span>
+                <div>
+                  <h3 id="settingsDialogTitle">参数设置</h3>
+                  <p>修改后会同步刷新规则说明和模拟计算结果。</p>
+                </div>
+              </div>
+              <button type="button" class="settings-close" data-close-settings aria-label="关闭参数设置">×</button>
+            </div>
+            <div class="settings-body">
+            <div class="settings-group">
+              <h3>基础与取整</h3>
+              <div class="settings-grid">
+                <div class="setting-field">
+                  <label for="cfgBaseDeposit">基准存款（万元）</label>
+                  <input id="cfgBaseDeposit" data-config-input type="number" min="0" step="10" value="500">
+                </div>
+                <div class="setting-field">
+                  <label for="cfgRoundMethod">取整方向</label>
+                  <select id="cfgRoundMethod" data-config-input>
+                    <option value="floor">向下取整</option>
+                    <option value="ceil">向上取整</option>
+                    <option value="round">四舍五入</option>
+                  </select>
+                </div>
+                <div class="setting-field">
+                  <label for="cfgRoundUnit">取整单位（万元）</label>
+                  <input id="cfgRoundUnit" data-config-input type="number" min="1" step="1" value="100">
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <h3>协议覆盖系数 P</h3>
+              <div class="settings-tier-head">
+                <span>档位</span>
+                <span>上限（份）</span>
+                <span>系数</span>
+              </div>
+              <div class="settings-tier-row">
+                <span class="tier-label">第1档</span>
+                <input id="cfgP1Max" data-config-input type="number" min="1" step="1" value="10">
+                <input id="cfgP1Value" data-config-input type="number" min="0" step="0.1" value="0.8">
+              </div>
+              <div class="settings-tier-row">
+                <span class="tier-label">第2档</span>
+                <input id="cfgP2Max" data-config-input type="number" min="1" step="1" value="20">
+                <input id="cfgP2Value" data-config-input type="number" min="0" step="0.1" value="1.0">
+              </div>
+              <div class="settings-tier-row">
+                <span class="tier-label">第3档</span>
+                <input id="cfgP3Max" data-config-input type="number" min="1" step="1" value="30">
+                <input id="cfgP3Value" data-config-input type="number" min="0" step="0.1" value="1.2">
+              </div>
+              <div class="settings-tier-row">
+                <span class="tier-label">第4档</span>
+                <input id="cfgP4Max" data-config-input type="number" min="1" step="1" value="50">
+                <input id="cfgP4Value" data-config-input type="number" min="0" step="0.1" value="1.5">
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <h3>估值活跃系数 V</h3>
+              <div class="settings-tier-head">
+                <span>档位</span>
+                <span>上限（千笔）</span>
+                <span>系数</span>
+              </div>
+              <div class="settings-tier-row">
+                <span class="tier-label">第1档</span>
+                <input id="cfgV1Max" data-config-input type="number" min="0.1" step="0.1" value="1">
+                <input id="cfgV1Value" data-config-input type="number" min="0" step="0.1" value="1.2">
+              </div>
+              <div class="settings-tier-row">
+                <span class="tier-label">第2档</span>
+                <input id="cfgV2Max" data-config-input type="number" min="0.1" step="0.1" value="2">
+                <input id="cfgV2Value" data-config-input type="number" min="0" step="0.1" value="1.6">
+              </div>
+              <div class="settings-tier-row">
+                <span class="tier-label">第3档</span>
+                <input id="cfgV3Max" data-config-input type="number" min="0.1" step="0.1" value="3">
+                <input id="cfgV3Value" data-config-input type="number" min="0" step="0.1" value="2.0">
+              </div>
+              <div class="settings-tier-row">
+                <span class="tier-label">第4档</span>
+                <input id="cfgV4Max" data-config-input type="number" min="0.1" step="0.1" value="5">
+                <input id="cfgV4Value" data-config-input type="number" min="0" step="0.1" value="2.5">
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <h3>产品复杂系数 C</h3>
+              <div class="settings-grid">
+                <div class="setting-field">
+                  <label for="cfgCSimple">简单产品</label>
+                  <input id="cfgCSimple" data-config-input type="number" min="0" step="0.1" value="1.0">
+                </div>
+                <div class="setting-field">
+                  <label for="cfgCComplex">含复杂衍生品</label>
+                  <input id="cfgCComplex" data-config-input type="number" min="0" step="0.1" value="2.5">
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <h3>风伙台对照参数</h3>
+              <div class="settings-grid">
+                <div class="setting-field">
+                  <label for="cfgFhtSetup">首次接入费（万元）</label>
+                  <input id="cfgFhtSetup" data-config-input type="number" min="0" step="0.1" value="2.4">
+                </div>
+                <div class="setting-field">
+                  <label for="cfgFhtAgreement">协议单价（万元/份）</label>
+                  <input id="cfgFhtAgreement" data-config-input type="number" min="0" step="0.1" value="0.2">
+                </div>
+                <div class="setting-field">
+                  <label for="cfgFhtSimple">简单估值单价（万元/千笔）</label>
+                  <input id="cfgFhtSimple" data-config-input type="number" min="0" step="0.1" value="2">
+                </div>
+                <div class="setting-field">
+                  <label for="cfgFhtComplex">复杂估值单价（万元/千笔）</label>
+                  <input id="cfgFhtComplex" data-config-input type="number" min="0" step="0.1" value="8">
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-actions">
+              <button type="button" class="secondary-btn" id="resetSettings">恢复默认参数</button>
+            </div>
+          </div>
+          </section>
         </div>
       </div>
     </section>
@@ -1057,7 +1395,7 @@
         <div class="switch-row">
           <div class="switch-copy">
             <strong>我方报价取整</strong>
-            <span>年日均存款向下取整到100万元，体现客户友好。</span>
+            <span id="roundSwitchHint">年日均存款向下取整到100万元，体现客户友好。</span>
           </div>
           <label class="switch" for="roundDeposit">
             <input id="roundDeposit" type="checkbox" checked>
@@ -1067,14 +1405,14 @@
 
         <div class="formula">
           <strong>我方算法</strong>
-          <code>M = 500万元 × P × V × C</code>
-          <span>C仅分为简单产品1.0、含复杂衍生品2.5。</span>
+          <code id="ourFormulaText">M = 500万元 × P × V × C</code>
+          <span id="ourFormulaHint">C仅分为简单产品1.0、含复杂衍生品2.5。</span>
         </div>
 
         <div class="formula">
           <strong>风伙台算法</strong>
-          <code>费用 = 0.2万元 × 协议数 + 估值单价 × 计费千笔数 + 首次接入费</code>
-          <span>简单估值单价2万元/千笔；复杂估值单价8万元/千笔。</span>
+          <code id="fhtFormulaText">费用 = 0.2万元 × 协议数 + 估值单价 × 计费千笔数 + 首次接入费</code>
+          <span id="fhtFormulaHint">简单估值单价2万元/千笔；复杂估值单价8万元/千笔。</span>
         </div>
       </section>
 
@@ -1164,7 +1502,7 @@
               <tbody>
                 <tr>
                   <td class="left">协议费用</td>
-                  <td>0.2万元/份</td>
+                  <td id="fhtAgreementUnitCell">0.2万元/份</td>
                   <td id="fhtAgreementFee">--</td>
                 </tr>
                 <tr>
@@ -1174,7 +1512,7 @@
                 </tr>
                 <tr id="setupRow">
                   <td class="left">首次接入</td>
-                  <td>2.4万元</td>
+                  <td id="fhtSetupUnitCell">2.4万元</td>
                   <td id="fhtSetupFee">--</td>
                 </tr>
                 <tr>
@@ -1192,12 +1530,65 @@
   </main>
 
   <script>
+    const defaultConfig = {
+      baseDeposit: 500,
+      rounding: {
+        method: "floor",
+        unit: 100
+      },
+      pTiers: [
+        { max: 10, value: 0.8 },
+        { max: 20, value: 1.0 },
+        { max: 30, value: 1.2 },
+        { max: 50, value: 1.5 }
+      ],
+      vTiers: [
+        { max: 1, value: 1.2 },
+        { max: 2, value: 1.6 },
+        { max: 3, value: 2.0 },
+        { max: 5, value: 2.5 }
+      ],
+      cValues: {
+        simple: 1.0,
+        complex: 2.5
+      },
+      fht: {
+        setupFee: 2.4,
+        agreementUnit: 0.2,
+        simpleValuationUnit: 2,
+        complexValuationUnit: 8
+      }
+    };
+
+    let config = clone(defaultConfig);
+
     const els = {
+      scopeSummary: document.getElementById("scopeSummary"),
+      scopeAgreementLimit: document.getElementById("scopeAgreementLimit"),
+      scopeAgreementOverflow: document.getElementById("scopeAgreementOverflow"),
+      scopeTradeLimit: document.getElementById("scopeTradeLimit"),
+      scopeTradeOverflow: document.getElementById("scopeTradeOverflow"),
+      formulaChipRule: document.getElementById("formulaChipRule"),
+      pRuleCoefList: document.getElementById("pRuleCoefList"),
+      vRuleCoefList: document.getElementById("vRuleCoefList"),
+      cRuleCoefList: document.getElementById("cRuleCoefList"),
+      roundingRuleText: document.getElementById("roundingRuleText"),
+      fhtSetupRule: document.getElementById("fhtSetupRule"),
+      fhtAgreementRule: document.getElementById("fhtAgreementRule"),
+      fhtValuationRuleList: document.getElementById("fhtValuationRuleList"),
       agreementCount: document.getElementById("agreementCount"),
       tradeLots: document.getElementById("tradeLots"),
       complexity: document.getElementById("complexity"),
       includeSetup: document.getElementById("includeSetup"),
       roundDeposit: document.getElementById("roundDeposit"),
+      roundSwitchHint: document.getElementById("roundSwitchHint"),
+      settingsToggle: document.getElementById("settingsToggle"),
+      settingsBody: document.getElementById("settingsBody"),
+      resetSettings: document.getElementById("resetSettings"),
+      ourFormulaText: document.getElementById("ourFormulaText"),
+      ourFormulaHint: document.getElementById("ourFormulaHint"),
+      fhtFormulaText: document.getElementById("fhtFormulaText"),
+      fhtFormulaHint: document.getElementById("fhtFormulaHint"),
       ourDeposit: document.getElementById("ourDeposit"),
       ourDepositDesc: document.getElementById("ourDepositDesc"),
       ourIncome: document.getElementById("ourIncome"),
@@ -1215,17 +1606,94 @@
       vValue: document.getElementById("vValue"),
       cBucket: document.getElementById("cBucket"),
       cValue: document.getElementById("cValue"),
+      fhtAgreementUnitCell: document.getElementById("fhtAgreementUnitCell"),
       fhtAgreementFee: document.getElementById("fhtAgreementFee"),
       fhtValuationUnit: document.getElementById("fhtValuationUnit"),
       fhtValuationFee: document.getElementById("fhtValuationFee"),
+      fhtSetupUnitCell: document.getElementById("fhtSetupUnitCell"),
       fhtSetupFee: document.getElementById("fhtSetupFee"),
       fhtTotalFee: document.getElementById("fhtTotalFee"),
       setupRow: document.getElementById("setupRow")
     };
 
+    function clone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
     function asNumber(value) {
       const num = Number(value);
       return Number.isFinite(num) && num > 0 ? num : 0;
+    }
+
+    function readNonNegative(id, fallback) {
+      const el = document.getElementById(id);
+      const num = Number(el ? el.value : NaN);
+      return Number.isFinite(num) && num >= 0 ? num : fallback;
+    }
+
+    function readPositive(id, fallback) {
+      const el = document.getElementById(id);
+      const num = Number(el ? el.value : NaN);
+      return Number.isFinite(num) && num > 0 ? num : fallback;
+    }
+
+    function readTierGroup(prefix, defaults, integerMax = false) {
+      return defaults.map((tier, index) => {
+        const row = index + 1;
+        const rawMax = readPositive(`cfg${prefix}${row}Max`, tier.max);
+        return {
+          max: integerMax ? Math.max(1, Math.floor(rawMax)) : rawMax,
+          value: readNonNegative(`cfg${prefix}${row}Value`, tier.value)
+        };
+      });
+    }
+
+    function readConfigFromControls() {
+      const roundMethodEl = document.getElementById("cfgRoundMethod");
+      config = {
+        baseDeposit: readNonNegative("cfgBaseDeposit", defaultConfig.baseDeposit),
+        rounding: {
+          method: roundMethodEl ? roundMethodEl.value : defaultConfig.rounding.method,
+          unit: readPositive("cfgRoundUnit", defaultConfig.rounding.unit)
+        },
+        pTiers: readTierGroup("P", defaultConfig.pTiers, true),
+        vTiers: readTierGroup("V", defaultConfig.vTiers, false),
+        cValues: {
+          simple: readNonNegative("cfgCSimple", defaultConfig.cValues.simple),
+          complex: readNonNegative("cfgCComplex", defaultConfig.cValues.complex)
+        },
+        fht: {
+          setupFee: readNonNegative("cfgFhtSetup", defaultConfig.fht.setupFee),
+          agreementUnit: readNonNegative("cfgFhtAgreement", defaultConfig.fht.agreementUnit),
+          simpleValuationUnit: readNonNegative("cfgFhtSimple", defaultConfig.fht.simpleValuationUnit),
+          complexValuationUnit: readNonNegative("cfgFhtComplex", defaultConfig.fht.complexValuationUnit)
+        }
+      };
+    }
+
+    function setInputValue(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.value = value;
+    }
+
+    function writeConfigToControls(source) {
+      setInputValue("cfgBaseDeposit", source.baseDeposit);
+      setInputValue("cfgRoundMethod", source.rounding.method);
+      setInputValue("cfgRoundUnit", source.rounding.unit);
+      source.pTiers.forEach((tier, index) => {
+        setInputValue(`cfgP${index + 1}Max`, tier.max);
+        setInputValue(`cfgP${index + 1}Value`, tier.value);
+      });
+      source.vTiers.forEach((tier, index) => {
+        setInputValue(`cfgV${index + 1}Max`, tier.max);
+        setInputValue(`cfgV${index + 1}Value`, tier.value);
+      });
+      setInputValue("cfgCSimple", source.cValues.simple);
+      setInputValue("cfgCComplex", source.cValues.complex);
+      setInputValue("cfgFhtSetup", source.fht.setupFee);
+      setInputValue("cfgFhtAgreement", source.fht.agreementUnit);
+      setInputValue("cfgFhtSimple", source.fht.simpleValuationUnit);
+      setInputValue("cfgFhtComplex", source.fht.complexValuationUnit);
     }
 
     function fmtWan(value, digits = 1) {
@@ -1233,40 +1701,164 @@
       return `${rounded.toLocaleString("zh-CN")}万`;
     }
 
+    function fmtPlain(value, digits = 2) {
+      const rounded = Number(value.toFixed(digits));
+      return rounded.toLocaleString("zh-CN");
+    }
+
+    function fmtCoeff(value) {
+      const rounded = Number(value.toFixed(2));
+      return Number.isInteger(rounded) ? rounded.toFixed(1) : String(rounded);
+    }
+
+    function sortedTiers(tiers) {
+      return [...tiers].sort((a, b) => a.max - b.max);
+    }
+
+    function maxTierValue(tiers) {
+      const sorted = sortedTiers(tiers);
+      return sorted.length ? sorted[sorted.length - 1].max : 0;
+    }
+
+    function pLabel(tiers, index) {
+      const tier = tiers[index];
+      const prevMax = index === 0 ? 0 : tiers[index - 1].max;
+      return `${Math.floor(prevMax) + 1}-${Math.floor(tier.max)}份`;
+    }
+
+    function vLabel(tiers, index) {
+      const tier = tiers[index];
+      const prevMax = index === 0 ? 0 : tiers[index - 1].max;
+      const upper = Math.round(tier.max * 1000);
+      if (index === 0) return `${upper}笔以内`;
+      return `${Math.round(prevMax * 1000) + 1}-${upper}笔`;
+    }
+
+    function findTier(value, tiers, labelFn, overflowText) {
+      const sorted = sortedTiers(tiers);
+      for (let index = 0; index < sorted.length; index += 1) {
+        if (value <= sorted[index].max) {
+          return {
+            value: sorted[index].value,
+            bucket: labelFn(sorted, index)
+          };
+        }
+      }
+      const last = sorted[sorted.length - 1] || { value: 0, max: 0 };
+      return {
+        value: last.value,
+        bucket: overflowText(last.max)
+      };
+    }
+
+    function roundRuleText() {
+      const unit = Math.max(1, config.rounding.unit);
+      const labelMap = {
+        floor: "向下取整",
+        ceil: "向上取整",
+        round: "四舍五入"
+      };
+      return `${fmtPlain(unit, 0)}万元${labelMap[config.rounding.method] || "向下取整"}`;
+    }
+
+    function applyRounding(value) {
+      const unit = Math.max(1, config.rounding.unit);
+      const ratio = value / unit;
+      if (config.rounding.method === "ceil") return Math.ceil(ratio) * unit;
+      if (config.rounding.method === "round") return Math.round(ratio) * unit;
+      return Math.floor(ratio) * unit;
+    }
+
+    function coefItemsHtml(items) {
+      return items.map(item => `
+        <div class="coef-item"><span>${item.label}</span><b>${item.value}</b></div>
+      `).join("");
+    }
+
+    function updateRuleDisplay() {
+      const pTiers = sortedTiers(config.pTiers);
+      const vTiers = sortedTiers(config.vTiers);
+      const pMax = maxTierValue(pTiers);
+      const vMax = maxTierValue(vTiers);
+      const tradeLimit = Math.round(vMax * 1000);
+      const formulaText = `M = ${fmtPlain(config.baseDeposit, 0)}万元 × P × V × C`;
+
+      els.scopeSummary.textContent = `适用范围：协议数量不超过${Math.floor(pMax)}份，年度交易/估值处理量不超过${tradeLimit}笔。`;
+      els.scopeAgreementLimit.textContent = `${Math.floor(pMax)}份以内`;
+      els.scopeAgreementOverflow.textContent = `超过${Math.floor(pMax)}份时另行评估`;
+      els.scopeTradeLimit.textContent = `${tradeLimit}笔以内`;
+      els.scopeTradeOverflow.textContent = `超过${tradeLimit}笔时另行评估`;
+
+      els.formulaChipRule.textContent = formulaText;
+      els.pRuleCoefList.innerHTML = coefItemsHtml(pTiers.map((tier, index) => ({
+        label: pLabel(pTiers, index),
+        value: fmtCoeff(tier.value)
+      })));
+      els.vRuleCoefList.innerHTML = coefItemsHtml(vTiers.map((tier, index) => ({
+        label: vLabel(vTiers, index),
+        value: fmtCoeff(tier.value)
+      })));
+      els.cRuleCoefList.innerHTML = coefItemsHtml([
+        { label: "简单产品", value: fmtCoeff(config.cValues.simple) },
+        { label: "含复杂衍生品", value: fmtCoeff(config.cValues.complex) }
+      ]);
+      els.roundingRuleText.textContent = `年日均存款按${roundRuleText()}`;
+      els.roundSwitchHint.textContent = `开启后按${roundRuleText()}，关闭后直接采用模型值。`;
+
+      els.fhtSetupRule.textContent = `${fmtPlain(config.fht.setupFee, 2)}万元`;
+      els.fhtAgreementRule.textContent = `${fmtPlain(config.fht.agreementUnit, 2)}万元`;
+      els.fhtValuationRuleList.innerHTML = coefItemsHtml([
+        { label: "简单估值", value: `${fmtPlain(config.fht.simpleValuationUnit, 2)}万元/千笔` },
+        { label: "复杂估值", value: `${fmtPlain(config.fht.complexValuationUnit, 2)}万元/千笔` }
+      ]);
+
+      els.ourFormulaText.textContent = formulaText;
+      els.ourFormulaHint.textContent = `C仅分为简单产品${fmtCoeff(config.cValues.simple)}、含复杂衍生品${fmtCoeff(config.cValues.complex)}。`;
+      els.fhtFormulaText.textContent = `费用 = ${fmtPlain(config.fht.agreementUnit, 2)}万元 × 协议数 + 估值单价 × 计费千笔数 + 首次接入费`;
+      els.fhtFormulaHint.textContent = `简单估值单价${fmtPlain(config.fht.simpleValuationUnit, 2)}万元/千笔；复杂估值单价${fmtPlain(config.fht.complexValuationUnit, 2)}万元/千笔。`;
+      els.fhtAgreementUnitCell.textContent = `${fmtPlain(config.fht.agreementUnit, 2)}万元/份`;
+      els.fhtSetupUnitCell.textContent = `${fmtPlain(config.fht.setupFee, 2)}万元`;
+    }
+
     function getP(agreements) {
-      if (agreements <= 10) return { value: 0.8, bucket: "1-10份" };
-      if (agreements <= 20) return { value: 1.0, bucket: "11-20份" };
-      if (agreements <= 30) return { value: 1.2, bucket: "21-30份" };
-      if (agreements <= 50) return { value: 1.5, bucket: "31-50份" };
-      return { value: 1.5, bucket: "超出适用范围（>50份）" };
+      return findTier(
+        agreements,
+        config.pTiers,
+        pLabel,
+        max => `超出适用范围（>${Math.floor(max)}份）`
+      );
     }
 
     function getV(billableLots) {
-      if (billableLots <= 1) return { value: 1.2, bucket: "1000笔以内" };
-      if (billableLots <= 2) return { value: 1.6, bucket: "1001-2000笔" };
-      if (billableLots <= 3) return { value: 2.0, bucket: "2001-3000笔" };
-      if (billableLots <= 5) return { value: 2.5, bucket: "3001-5000笔" };
-      return { value: 2.5, bucket: "超出适用范围（>5000笔）" };
+      return findTier(
+        billableLots,
+        config.vTiers,
+        vLabel,
+        max => `超出适用范围（>${Math.round(max * 1000)}笔）`
+      );
     }
 
     function getC(type) {
       if (type === "complex") {
         return {
-          value: 2.5,
+          value: config.cValues.complex,
           bucket: "含复杂衍生品",
-          fhtValuationUnit: 8,
+          fhtValuationUnit: config.fht.complexValuationUnit,
           label: "复杂产品"
         };
       }
       return {
-        value: 1.0,
+        value: config.cValues.simple,
         bucket: "简单产品",
-        fhtValuationUnit: 2,
+        fhtValuationUnit: config.fht.simpleValuationUnit,
         label: "简单产品"
       };
     }
 
     function calc() {
+      readConfigFromControls();
+      updateRuleDisplay();
+
       const agreements = Math.floor(asNumber(els.agreementCount.value));
       const inputLots = asNumber(els.tradeLots.value);
       const billableLots = Math.max(1, Math.ceil(inputLots));
@@ -1276,13 +1868,13 @@
       const includeSetup = els.includeSetup.checked;
       const roundDeposit = els.roundDeposit.checked;
 
-      const rawDeposit = 500 * p.value * v.value * c.value;
-      const quotedDeposit = roundDeposit ? Math.floor(rawDeposit / 100) * 100 : rawDeposit;
+      const rawDeposit = config.baseDeposit * p.value * v.value * c.value;
+      const quotedDeposit = roundDeposit ? applyRounding(rawDeposit) : rawDeposit;
       const ourIncome = quotedDeposit * 0.01;
 
-      const fhtAgreement = agreements * 0.2;
+      const fhtAgreement = agreements * config.fht.agreementUnit;
       const fhtValuation = billableLots * c.fhtValuationUnit;
-      const fhtSetup = includeSetup ? 2.4 : 0;
+      const fhtSetup = includeSetup ? config.fht.setupFee : 0;
       const fhtTotal = fhtAgreement + fhtValuation + fhtSetup;
       const diff = ourIncome - fhtTotal;
       const ratio = fhtTotal > 0 ? ourIncome / fhtTotal : 0;
@@ -1290,16 +1882,16 @@
 
       els.ourDeposit.textContent = fmtWan(quotedDeposit, 0);
       els.ourDepositDesc.textContent = roundDeposit
-        ? `模型测算值${fmtWan(rawDeposit, 1)}，报价按100万元向下取整。`
+        ? `模型测算值${fmtWan(rawDeposit, 1)}，报价按${roundRuleText()}。`
         : `模型测算值${fmtWan(rawDeposit, 1)}，未做报价取整。`;
       els.ourIncome.textContent = fmtWan(ourIncome, 2);
       els.fhtFee.textContent = fmtWan(fhtTotal, 2);
       els.fhtFeeDesc.textContent = includeSetup
-        ? "已计入首次接入费2.4万元。"
+        ? `已计入首次接入费${fmtPlain(config.fht.setupFee, 2)}万元。`
         : "未计入首次接入费，只看持续年度费用。";
 
       els.factorBadge.textContent = `P=${p.value}，V=${v.value}，C=${c.value}`;
-      els.roundBadge.textContent = roundDeposit ? "按报价取整后计算" : "按模型值计算";
+      els.roundBadge.textContent = roundDeposit ? `按${roundRuleText()}后计算` : "按模型值计算";
       els.ratioBadge.textContent = `我方/风伙台：${ratioText}`;
 
       els.headline.textContent = diff >= 0
@@ -1308,12 +1900,12 @@
 
       els.detailRows.innerHTML = [
         ["输入参数", `${agreements}份协议，输入${inputLots || 0}千笔，计费千笔数${billableLots}`, c.label],
-        ["我方存款模型", `500万元 × ${p.value} × ${v.value} × ${c.value}`, fmtWan(rawDeposit, 1)],
-        ["我方建议年日均存款", roundDeposit ? "模型值向下取整到100万元" : "未取整", fmtWan(quotedDeposit, 0)],
+        ["我方存款模型", `${fmtPlain(config.baseDeposit, 0)}万元 × ${p.value} × ${v.value} × ${c.value}`, fmtWan(rawDeposit, 1)],
+        ["我方建议年日均存款", roundDeposit ? `模型值按${roundRuleText()}` : "未取整", fmtWan(quotedDeposit, 0)],
         ["我方100bp利差收入", `${fmtWan(quotedDeposit, 0)} × 1%`, fmtWan(ourIncome, 2)],
-        ["风伙台协议费用", `${agreements} × 0.2万元/份`, fmtWan(fhtAgreement, 2)],
+        ["风伙台协议费用", `${agreements} × ${fmtPlain(config.fht.agreementUnit, 2)}万元/份`, fmtWan(fhtAgreement, 2)],
         ["风伙台估值费用", `${billableLots} × ${c.fhtValuationUnit}万元/千笔`, fmtWan(fhtValuation, 2)],
-        ["风伙台首次接入", includeSetup ? "计入2.4万元" : "不计入", fmtWan(fhtSetup, 2)],
+        ["风伙台首次接入", includeSetup ? `计入${fmtPlain(config.fht.setupFee, 2)}万元` : "不计入", fmtWan(fhtSetup, 2)],
         ["风伙台合计", "协议费用 + 估值费用 + 首次接入口径", fmtWan(fhtTotal, 2)],
         ["差额", "我方利差收入 - 风伙台合计", `${diff >= 0 ? "+" : "-"}${fmtWan(Math.abs(diff), 2)}`]
       ].map(row => `
@@ -1338,7 +1930,7 @@
       els.fhtTotalFee.textContent = fmtWan(fhtTotal, 2);
       els.setupRow.classList.toggle("hidden", !includeSetup);
 
-      const highVolumeWarning = billableLots > 5 || agreements > 50
+      const highVolumeWarning = billableLots > maxTierValue(config.vTiers) || agreements > maxTierValue(config.pTiers)
         ? " 当前协议数量或交易量超出本模型适用范围，正式报价应另行评估。"
         : "";
       const stance = ratio >= 1.15
@@ -1349,9 +1941,35 @@
       els.judgement.innerHTML = `<strong>判断：</strong>${stance}${highVolumeWarning}`;
     }
 
+    writeConfigToControls(config);
+
     document.querySelectorAll("input, select").forEach(el => {
       el.addEventListener("input", calc);
       el.addEventListener("change", calc);
+    });
+
+    function setSettingsOpen(open) {
+      els.settingsBody.classList.toggle("hidden", !open);
+      els.settingsBody.setAttribute("aria-hidden", String(!open));
+      els.settingsToggle.setAttribute("aria-expanded", String(open));
+    }
+
+    els.settingsToggle.addEventListener("click", () => {
+      setSettingsOpen(els.settingsBody.classList.contains("hidden"));
+    });
+
+    document.querySelectorAll("[data-close-settings]").forEach(el => {
+      el.addEventListener("click", () => setSettingsOpen(false));
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") setSettingsOpen(false);
+    });
+
+    els.resetSettings.addEventListener("click", () => {
+      config = clone(defaultConfig);
+      writeConfigToControls(config);
+      calc();
     });
 
     function setView(view) {
