@@ -627,6 +627,14 @@
       font-weight: 720;
     }
 
+    .tier-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
     .settings-actions {
       display: flex;
       justify-content: flex-end;
@@ -645,6 +653,11 @@
       font-size: 13px;
       font-weight: 720;
       cursor: pointer;
+    }
+
+    .secondary-btn:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
     }
 
     .results {
@@ -1248,25 +1261,10 @@
                 <span>上限（份）</span>
                 <span>系数</span>
               </div>
-              <div class="settings-tier-row">
-                <span class="tier-label">第1档</span>
-                <input id="cfgP1Max" data-config-input type="number" min="1" step="1" value="10">
-                <input id="cfgP1Value" data-config-input type="number" min="0" step="0.1" value="0.8">
-              </div>
-              <div class="settings-tier-row">
-                <span class="tier-label">第2档</span>
-                <input id="cfgP2Max" data-config-input type="number" min="1" step="1" value="20">
-                <input id="cfgP2Value" data-config-input type="number" min="0" step="0.1" value="1.0">
-              </div>
-              <div class="settings-tier-row">
-                <span class="tier-label">第3档</span>
-                <input id="cfgP3Max" data-config-input type="number" min="1" step="1" value="30">
-                <input id="cfgP3Value" data-config-input type="number" min="0" step="0.1" value="1.2">
-              </div>
-              <div class="settings-tier-row">
-                <span class="tier-label">第4档</span>
-                <input id="cfgP4Max" data-config-input type="number" min="1" step="1" value="50">
-                <input id="cfgP4Value" data-config-input type="number" min="0" step="0.1" value="1.5">
+              <div id="pTierRows"></div>
+              <div class="tier-actions">
+                <button type="button" class="secondary-btn" id="addPTier">新增档位</button>
+                <button type="button" class="secondary-btn" id="removePTier">删除末档</button>
               </div>
             </div>
 
@@ -1277,25 +1275,10 @@
                 <span>上限（千笔）</span>
                 <span>系数</span>
               </div>
-              <div class="settings-tier-row">
-                <span class="tier-label">第1档</span>
-                <input id="cfgV1Max" data-config-input type="number" min="0.1" step="0.1" value="1">
-                <input id="cfgV1Value" data-config-input type="number" min="0" step="0.1" value="1.2">
-              </div>
-              <div class="settings-tier-row">
-                <span class="tier-label">第2档</span>
-                <input id="cfgV2Max" data-config-input type="number" min="0.1" step="0.1" value="2">
-                <input id="cfgV2Value" data-config-input type="number" min="0" step="0.1" value="1.6">
-              </div>
-              <div class="settings-tier-row">
-                <span class="tier-label">第3档</span>
-                <input id="cfgV3Max" data-config-input type="number" min="0.1" step="0.1" value="3">
-                <input id="cfgV3Value" data-config-input type="number" min="0" step="0.1" value="2.0">
-              </div>
-              <div class="settings-tier-row">
-                <span class="tier-label">第4档</span>
-                <input id="cfgV4Max" data-config-input type="number" min="0.1" step="0.1" value="5">
-                <input id="cfgV4Value" data-config-input type="number" min="0" step="0.1" value="2.5">
+              <div id="vTierRows"></div>
+              <div class="tier-actions">
+                <button type="button" class="secondary-btn" id="addVTier">新增档位</button>
+                <button type="button" class="secondary-btn" id="removeVTier">删除末档</button>
               </div>
             </div>
 
@@ -1585,6 +1568,12 @@
       settingsToggle: document.getElementById("settingsToggle"),
       settingsBody: document.getElementById("settingsBody"),
       resetSettings: document.getElementById("resetSettings"),
+      pTierRows: document.getElementById("pTierRows"),
+      vTierRows: document.getElementById("vTierRows"),
+      addPTier: document.getElementById("addPTier"),
+      removePTier: document.getElementById("removePTier"),
+      addVTier: document.getElementById("addVTier"),
+      removeVTier: document.getElementById("removeVTier"),
       ourFormulaText: document.getElementById("ourFormulaText"),
       ourFormulaHint: document.getElementById("ourFormulaHint"),
       fhtFormulaText: document.getElementById("fhtFormulaText"),
@@ -1637,8 +1626,25 @@
       return Number.isFinite(num) && num > 0 ? num : fallback;
     }
 
-    function readTierGroup(prefix, defaults, integerMax = false) {
-      return defaults.map((tier, index) => {
+    function tierRowsHtml(prefix, tiers, maxMin, maxStep) {
+      return tiers.map((tier, index) => `
+        <div class="settings-tier-row">
+          <span class="tier-label">第${index + 1}档</span>
+          <input id="cfg${prefix}${index + 1}Max" data-config-input type="number" min="${maxMin}" step="${maxStep}" value="${tier.max}">
+          <input id="cfg${prefix}${index + 1}Value" data-config-input type="number" min="0" step="0.1" value="${tier.value}">
+        </div>
+      `).join("");
+    }
+
+    function renderTierControls() {
+      els.pTierRows.innerHTML = tierRowsHtml("P", config.pTiers, 1, 1);
+      els.vTierRows.innerHTML = tierRowsHtml("V", config.vTiers, 0.1, 0.1);
+      els.removePTier.disabled = config.pTiers.length <= 1;
+      els.removeVTier.disabled = config.vTiers.length <= 1;
+    }
+
+    function readTierGroup(prefix, tiers, integerMax = false) {
+      return tiers.map((tier, index) => {
         const row = index + 1;
         const rawMax = readPositive(`cfg${prefix}${row}Max`, tier.max);
         return {
@@ -1656,8 +1662,8 @@
           method: roundMethodEl ? roundMethodEl.value : defaultConfig.rounding.method,
           unit: readPositive("cfgRoundUnit", defaultConfig.rounding.unit)
         },
-        pTiers: readTierGroup("P", defaultConfig.pTiers, true),
-        vTiers: readTierGroup("V", defaultConfig.vTiers, false),
+        pTiers: readTierGroup("P", config.pTiers, true),
+        vTiers: readTierGroup("V", config.vTiers, false),
         cValues: {
           simple: readNonNegative("cfgCSimple", defaultConfig.cValues.simple),
           complex: readNonNegative("cfgCComplex", defaultConfig.cValues.complex)
@@ -1677,6 +1683,8 @@
     }
 
     function writeConfigToControls(source) {
+      config = clone(source);
+      renderTierControls();
       setInputValue("cfgBaseDeposit", source.baseDeposit);
       setInputValue("cfgRoundMethod", source.rounding.method);
       setInputValue("cfgRoundUnit", source.rounding.unit);
@@ -1941,12 +1949,44 @@
       els.judgement.innerHTML = `<strong>判断：</strong>${stance}${highVolumeWarning}`;
     }
 
+    function addTier(kind) {
+      readConfigFromControls();
+      const tiers = kind === "P" ? config.pTiers : config.vTiers;
+      const sorted = sortedTiers(tiers);
+      const last = sorted[sorted.length - 1] || { max: kind === "P" ? 10 : 1, value: 1 };
+      const nextMax = kind === "P"
+        ? Math.floor(last.max) + 10
+        : Number((last.max + 1).toFixed(1));
+      tiers.push({ max: nextMax, value: last.value });
+      writeConfigToControls(config);
+      calc();
+    }
+
+    function removeTier(kind) {
+      readConfigFromControls();
+      const tiers = kind === "P" ? config.pTiers : config.vTiers;
+      if (tiers.length <= 1) return;
+      tiers.pop();
+      writeConfigToControls(config);
+      calc();
+    }
+
     writeConfigToControls(config);
 
-    document.querySelectorAll("input, select").forEach(el => {
-      el.addEventListener("input", calc);
-      el.addEventListener("change", calc);
+    document.addEventListener("input", event => {
+      const target = event.target;
+      if (target && target.matches && target.matches("input, select")) calc();
     });
+
+    document.addEventListener("change", event => {
+      const target = event.target;
+      if (target && target.matches && target.matches("input, select")) calc();
+    });
+
+    els.addPTier.addEventListener("click", () => addTier("P"));
+    els.removePTier.addEventListener("click", () => removeTier("P"));
+    els.addVTier.addEventListener("click", () => addTier("V"));
+    els.removeVTier.addEventListener("click", () => removeTier("V"));
 
     function setSettingsOpen(open) {
       els.settingsBody.classList.toggle("hidden", !open);
