@@ -604,6 +604,10 @@
       font-size: 13px;
     }
 
+    .setting-field.wide {
+      grid-column: 1 / -1;
+    }
+
     .settings-tier-head,
     .settings-tier-row {
       display: grid;
@@ -642,6 +646,10 @@
       gap: 8px;
       padding-top: 2px;
       flex-wrap: wrap;
+    }
+
+    .version-actions {
+      justify-content: flex-start;
     }
 
     .save-status {
@@ -894,6 +902,28 @@
       gap: 18px;
     }
 
+    .matrix-controls {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      margin-bottom: 18px;
+      border-color: #dbeafe;
+      background: #f8fbff;
+    }
+
+    .matrix-controls h3 {
+      margin: 0;
+      color: var(--fht-blue);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .matrix-control-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
     .matrix-panel {
       padding: 18px;
       overflow: hidden;
@@ -958,10 +988,53 @@
       font-weight: 780;
     }
 
+    .matrix-compare-value {
+      display: grid;
+      gap: 3px;
+      line-height: 1.35;
+    }
+
+    .matrix-compare-value b {
+      color: #111827;
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .matrix-compare-value span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .matrix-diff {
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 780;
+    }
+
+    .matrix-diff.up {
+      color: var(--our-red);
+    }
+
+    .matrix-diff.down {
+      color: #057a55;
+    }
+
+    .matrix-diff.flat {
+      color: var(--muted);
+    }
+
     .matrix-note {
       margin-top: 10px;
       color: var(--muted);
       font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .empty-state {
+      padding: 16px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
       line-height: 1.6;
     }
 
@@ -1111,6 +1184,10 @@
       }
 
       .settings-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .matrix-control-grid {
         grid-template-columns: 1fr;
       }
 
@@ -1278,7 +1355,7 @@
 
         <div class="rule-card our-rule">
           <h3>我方规则</h3>
-          <p>采用服务容量模型测算配套年日均存款；为体现客户友好，报价口径默认按100万元向下取整。</p>
+          <p>采用服务容量模型测算配套年日均存款；报价口径按当前参数设置的取整规则执行。</p>
           <ul class="rule-list">
             <li>
               <strong>计算公式</strong>
@@ -1445,6 +1522,34 @@
                   <label for="configSaveStatus">保存状态</label>
                   <div class="save-status" id="configSaveStatus" data-status="idle">打开网页时会自动读取线上默认规则。</div>
                 </div>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <h3>方案版本库</h3>
+              <div class="settings-grid">
+                <div class="setting-field">
+                  <label for="versionName">新版本名称</label>
+                  <input id="versionName" type="text" maxlength="24" placeholder="如：客户友好版">
+                </div>
+                <div class="setting-field">
+                  <label for="savedVersionSelect">已有版本</label>
+                  <select id="savedVersionSelect"></select>
+                </div>
+                <div class="setting-field wide">
+                  <label for="versionNote">版本备注</label>
+                  <input id="versionNote" type="text" maxlength="80" placeholder="可填写适用客户、报价口径或调整原因">
+                </div>
+                <div class="setting-field wide">
+                  <label for="versionStatus">版本状态</label>
+                  <div class="save-status" id="versionStatus" data-status="idle">保存多个参数版本后，可在报价矩阵页进行对比。</div>
+                </div>
+              </div>
+              <div class="settings-actions version-actions">
+                <button type="button" class="secondary-btn" id="saveVersion">保存为新版本</button>
+                <button type="button" class="secondary-btn" id="loadVersion">加载选中版本</button>
+                <button type="button" class="secondary-btn" id="setDefaultVersion">设为全局默认</button>
+                <button type="button" class="secondary-btn" id="deleteVersion">删除选中版本</button>
               </div>
             </div>
 
@@ -1649,6 +1754,20 @@
         <span>根据当前我方规则自动生成，金额口径为建议年日均存款要求。</span>
       </div>
 
+      <section class="panel matrix-controls" aria-label="版本矩阵对比">
+        <h3>版本对比</h3>
+        <div class="matrix-control-grid">
+          <div class="setting-field">
+            <label for="matrixVersionA">方案A</label>
+            <select id="matrixVersionA"></select>
+          </div>
+          <div class="setting-field">
+            <label for="matrixVersionB">方案B</label>
+            <select id="matrixVersionB"></select>
+          </div>
+        </div>
+      </section>
+
       <div class="matrix-stack">
         <section class="panel matrix-panel our-panel" aria-label="简单产品报价矩阵">
           <div class="matrix-head">
@@ -1664,6 +1783,22 @@
             <span>单位：万元；产品复杂系数按当前参数设置取值。</span>
           </div>
           <div class="matrix-table-wrap" id="complexMatrix"></div>
+        </section>
+
+        <section class="panel matrix-panel fht-panel" aria-label="简单产品版本对比矩阵">
+          <div class="matrix-head">
+            <h2>简单产品版本对比</h2>
+            <span id="simpleCompareCaption">选择两个方案后显示差异。</span>
+          </div>
+          <div class="matrix-table-wrap" id="simpleCompareMatrix"></div>
+        </section>
+
+        <section class="panel matrix-panel fht-panel" aria-label="含复杂衍生品版本对比矩阵">
+          <div class="matrix-head">
+            <h2>含复杂衍生品版本对比</h2>
+            <span id="complexCompareCaption">选择两个方案后显示差异。</span>
+          </div>
+          <div class="matrix-table-wrap" id="complexCompareMatrix"></div>
         </section>
       </div>
 
@@ -1702,6 +1837,8 @@
     };
 
     let config = clone(defaultConfig);
+    let configVersions = [];
+    let activeVersionId = "";
 
     const els = {
       scopeSummary: document.getElementById("scopeSummary"),
@@ -1730,6 +1867,14 @@
       reloadRemoteConfig: document.getElementById("reloadRemoteConfig"),
       saveRemoteConfig: document.getElementById("saveRemoteConfig"),
       resetSettings: document.getElementById("resetSettings"),
+      versionName: document.getElementById("versionName"),
+      versionNote: document.getElementById("versionNote"),
+      versionStatus: document.getElementById("versionStatus"),
+      savedVersionSelect: document.getElementById("savedVersionSelect"),
+      saveVersion: document.getElementById("saveVersion"),
+      loadVersion: document.getElementById("loadVersion"),
+      setDefaultVersion: document.getElementById("setDefaultVersion"),
+      deleteVersion: document.getElementById("deleteVersion"),
       pTierRows: document.getElementById("pTierRows"),
       vTierRows: document.getElementById("vTierRows"),
       addPTier: document.getElementById("addPTier"),
@@ -1767,11 +1912,26 @@
       setupRow: document.getElementById("setupRow"),
       simpleMatrix: document.getElementById("simpleMatrix"),
       complexMatrix: document.getElementById("complexMatrix"),
+      matrixVersionA: document.getElementById("matrixVersionA"),
+      matrixVersionB: document.getElementById("matrixVersionB"),
+      simpleCompareCaption: document.getElementById("simpleCompareCaption"),
+      complexCompareCaption: document.getElementById("complexCompareCaption"),
+      simpleCompareMatrix: document.getElementById("simpleCompareMatrix"),
+      complexCompareMatrix: document.getElementById("complexCompareMatrix"),
       matrixNote: document.getElementById("matrixNote")
     };
 
     function clone(value) {
       return JSON.parse(JSON.stringify(value));
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
     }
 
     function asNumber(value) {
@@ -1936,9 +2096,43 @@
       };
     }
 
+    function normalizeVersion(source, index = 0) {
+      if (!isPlainObject(source) || !source.config) return null;
+      const id = String(source.id || `version-${index + 1}`).slice(0, 80);
+      const name = String(source.name || `方案${index + 1}`).slice(0, 24);
+      return {
+        id,
+        name,
+        note: String(source.note || "").slice(0, 80),
+        config: normalizeConfig(source.config),
+        createdAt: source.createdAt || "",
+        updatedAt: source.updatedAt || ""
+      };
+    }
+
+    function setVersions(versions, nextActiveVersionId = "") {
+      configVersions = (Array.isArray(versions) ? versions : [])
+        .map((version, index) => normalizeVersion(version, index))
+        .filter(Boolean);
+      activeVersionId = nextActiveVersionId || "";
+      renderVersionControls();
+    }
+
     function setConfigStatus(message, status = "idle") {
       els.configSaveStatus.textContent = message;
       els.configSaveStatus.dataset.status = status;
+    }
+
+    function setVersionStatus(message, status = "idle") {
+      els.versionStatus.textContent = message;
+      els.versionStatus.dataset.status = status;
+    }
+
+    function shortTimeText(value) {
+      if (!value) return "";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "";
+      return date.toLocaleString("zh-CN", { hour12: false });
     }
 
     function savedAtText(value) {
@@ -1946,6 +2140,83 @@
       const date = new Date(value);
       if (Number.isNaN(date.getTime())) return "";
       return `，保存时间：${date.toLocaleString("zh-CN", { hour12: false })}`;
+    }
+
+    function versionLabel(version) {
+      const active = version.id === activeVersionId ? "（全局默认）" : "";
+      const time = shortTimeText(version.updatedAt);
+      return `${version.name}${active}${time ? ` - ${time}` : ""}`;
+    }
+
+    function versionOptionsHtml(includeCurrent = false) {
+      const current = includeCurrent ? `<option value="__current">当前参数</option>` : "";
+      const saved = configVersions.map(version => (
+        `<option value="${escapeHtml(version.id)}">${escapeHtml(versionLabel(version))}</option>`
+      )).join("");
+      return current + saved;
+    }
+
+    function setSelectValue(selectEl, value, fallback = "") {
+      if (!selectEl) return;
+      const values = Array.from(selectEl.options || []).map(option => option.value);
+      selectEl.value = values.includes(value) ? value : fallback;
+      if (!selectEl.value && values.length) selectEl.value = values[0];
+    }
+
+    function selectedVersion() {
+      const id = els.savedVersionSelect.value;
+      return configVersions.find(version => version.id === id) || null;
+    }
+
+    function renderVersionControls() {
+      const selectedId = els.savedVersionSelect.value;
+      if (configVersions.length) {
+        els.savedVersionSelect.innerHTML = versionOptionsHtml(false);
+        setSelectValue(els.savedVersionSelect, selectedId, configVersions[0].id);
+      } else {
+        els.savedVersionSelect.innerHTML = `<option value="">暂无保存版本</option>`;
+      }
+      const hasVersion = configVersions.length > 0;
+      els.loadVersion.disabled = !hasVersion;
+      els.setDefaultVersion.disabled = !hasVersion;
+      els.deleteVersion.disabled = !hasVersion;
+      renderMatrixVersionOptions();
+    }
+
+    function renderMatrixVersionOptions() {
+      const prevA = els.matrixVersionA.value || "__current";
+      const prevB = els.matrixVersionB.value || (configVersions[0] && configVersions[0].id) || "__current";
+      const options = versionOptionsHtml(true);
+      els.matrixVersionA.innerHTML = options;
+      els.matrixVersionB.innerHTML = options;
+      setSelectValue(els.matrixVersionA, prevA, "__current");
+      setSelectValue(els.matrixVersionB, prevB, (configVersions[0] && configVersions[0].id) || "__current");
+      updateMatrixCompareDisplay();
+    }
+
+    function requireAdminToken(statusSetter) {
+      const token = els.configAdminToken.value.trim();
+      if (!token) {
+        statusSetter("请先填写管理口令。", "error");
+        return "";
+      }
+      return token;
+    }
+
+    async function postConfigAction(body, token) {
+      const response = await fetch("/api/config", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-admin-token": token
+        },
+        body: JSON.stringify(body)
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data.ok === false) {
+        throw new Error(data.error || "保存失败");
+      }
+      return data;
     }
 
     async function loadRemoteConfig(showStatus = false) {
@@ -1960,6 +2231,7 @@
         if (!response.ok || data.ok === false) {
           throw new Error(data.error || "读取失败");
         }
+        setVersions(data.versions, data.activeVersionId);
         if (data.config) {
           writeConfigToControls(normalizeConfig(data.config));
           calc();
@@ -1999,6 +2271,7 @@
         if (!response.ok || data.ok === false) {
           throw new Error(data.error || "保存失败");
         }
+        setVersions(data.versions, data.activeVersionId);
         writeConfigToControls(normalizeConfig(data.config || currentConfig));
         calc();
         setConfigStatus(`已保存为全局默认规则${savedAtText(data.updatedAt)}。`, "ok");
@@ -2006,6 +2279,115 @@
         setConfigStatus(`保存失败：${error.message || "接口不可用"}。`, "error");
       } finally {
         els.saveRemoteConfig.disabled = false;
+      }
+    }
+
+    async function saveConfigVersion() {
+      if (typeof fetch !== "function") {
+        setVersionStatus("当前环境无法保存方案版本。", "error");
+        return;
+      }
+      const token = requireAdminToken(setVersionStatus);
+      if (!token) return;
+      readConfigFromControls();
+      const currentConfig = normalizeConfig(config);
+      const name = els.versionName.value.trim() || `方案${configVersions.length + 1}`;
+      const note = els.versionNote.value.trim();
+      els.saveVersion.disabled = true;
+      setVersionStatus("正在保存为新版本...");
+      try {
+        const data = await postConfigAction({
+          action: "save-version",
+          name,
+          note,
+          config: currentConfig
+        }, token);
+        setVersions(data.versions, data.activeVersionId);
+        if (data.version && data.version.id) {
+          setSelectValue(els.savedVersionSelect, data.version.id, data.version.id);
+          setSelectValue(els.matrixVersionB, data.version.id, data.version.id);
+          updateMatrixCompareDisplay();
+        }
+        setVersionStatus(`已保存版本「${name}」${savedAtText(data.version && data.version.updatedAt)}。`, "ok");
+      } catch (error) {
+        setVersionStatus(`版本保存失败：${error.message || "接口不可用"}。`, "error");
+      } finally {
+        els.saveVersion.disabled = false;
+      }
+    }
+
+    function loadSelectedVersion() {
+      const version = selectedVersion();
+      if (!version) {
+        setVersionStatus("请先选择一个已保存版本。", "error");
+        return;
+      }
+      writeConfigToControls(version.config);
+      els.versionName.value = version.name;
+      els.versionNote.value = version.note || "";
+      calc();
+      setVersionStatus(`已加载版本「${version.name}」，当前仅用于本页面试算。`, "ok");
+    }
+
+    async function setSelectedVersionAsDefault() {
+      if (typeof fetch !== "function") {
+        setVersionStatus("当前环境无法设置全局默认。", "error");
+        return;
+      }
+      const version = selectedVersion();
+      if (!version) {
+        setVersionStatus("请先选择一个已保存版本。", "error");
+        return;
+      }
+      const token = requireAdminToken(setVersionStatus);
+      if (!token) return;
+      els.setDefaultVersion.disabled = true;
+      setVersionStatus(`正在将「${version.name}」设为全局默认...`);
+      try {
+        const data = await postConfigAction({
+          action: "set-default",
+          versionId: version.id
+        }, token);
+        setVersions(data.versions, data.activeVersionId);
+        writeConfigToControls(normalizeConfig(data.config || version.config));
+        calc();
+        setVersionStatus(`已将「${version.name}」设为全局默认。`, "ok");
+        setConfigStatus(`已更新全局默认规则${savedAtText(data.updatedAt)}。`, "ok");
+      } catch (error) {
+        setVersionStatus(`设置失败：${error.message || "接口不可用"}。`, "error");
+      } finally {
+        els.setDefaultVersion.disabled = configVersions.length === 0;
+      }
+    }
+
+    async function deleteSelectedVersion() {
+      if (typeof fetch !== "function") {
+        setVersionStatus("当前环境无法删除方案版本。", "error");
+        return;
+      }
+      const version = selectedVersion();
+      if (!version) {
+        setVersionStatus("请先选择一个已保存版本。", "error");
+        return;
+      }
+      if (typeof confirm === "function" && !confirm(`确认删除版本「${version.name}」？`)) {
+        return;
+      }
+      const token = requireAdminToken(setVersionStatus);
+      if (!token) return;
+      els.deleteVersion.disabled = true;
+      setVersionStatus(`正在删除「${version.name}」...`);
+      try {
+        const data = await postConfigAction({
+          action: "delete-version",
+          versionId: version.id
+        }, token);
+        setVersions(data.versions, data.activeVersionId);
+        setVersionStatus(`已删除版本「${version.name}」。`, "ok");
+      } catch (error) {
+        setVersionStatus(`删除失败：${error.message || "接口不可用"}。`, "error");
+      } finally {
+        els.deleteVersion.disabled = configVersions.length === 0;
       }
     }
 
@@ -2087,20 +2469,28 @@
     }
 
     function roundRuleText() {
-      const unit = Math.max(1, config.rounding.unit);
+      return roundRuleTextFor(config);
+    }
+
+    function roundRuleTextFor(sourceConfig) {
+      const unit = Math.max(1, sourceConfig.rounding.unit);
       const labelMap = {
         floor: "向下取整",
         ceil: "向上取整",
         round: "四舍五入"
       };
-      return `${fmtPlain(unit, 0)}万元${labelMap[config.rounding.method] || "向下取整"}`;
+      return `${fmtPlain(unit, 0)}万元${labelMap[sourceConfig.rounding.method] || "向下取整"}`;
     }
 
     function applyRounding(value) {
-      const unit = Math.max(1, config.rounding.unit);
+      return applyRoundingFor(config, value);
+    }
+
+    function applyRoundingFor(sourceConfig, value) {
+      const unit = Math.max(1, sourceConfig.rounding.unit);
       const ratio = value / unit;
-      if (config.rounding.method === "ceil") return Math.ceil(ratio) * unit;
-      if (config.rounding.method === "round") return Math.round(ratio) * unit;
+      if (sourceConfig.rounding.method === "ceil") return Math.ceil(ratio) * unit;
+      if (sourceConfig.rounding.method === "round") return Math.round(ratio) * unit;
       return Math.floor(ratio) * unit;
     }
 
@@ -2111,13 +2501,17 @@
     }
 
     function matrixTableHtml(cValue) {
-      const pTiers = sortedTiers(config.pTiers);
-      const vTiers = sortedTiers(config.vTiers);
+      return matrixTableHtmlFor(config, cValue);
+    }
+
+    function matrixTableHtmlFor(sourceConfig, cValue) {
+      const pTiers = sortedTiers(sourceConfig.pTiers);
+      const vTiers = sortedTiers(sourceConfig.vTiers);
       const head = vTiers.map((tier, index) => `<th>${vLabel(vTiers, index)}</th>`).join("");
       const rows = pTiers.map((pTier, pIndex) => {
         const cells = vTiers.map(vTier => {
-          const rawDeposit = config.baseDeposit * pTier.value * vTier.value * cValue;
-          const quotedDeposit = applyRounding(rawDeposit);
+          const rawDeposit = sourceConfig.baseDeposit * pTier.value * vTier.value * cValue;
+          const quotedDeposit = applyRoundingFor(sourceConfig, rawDeposit);
           return `<td><span class="matrix-value">${fmtPlain(quotedDeposit, 0)}</span></td>`;
         }).join("");
         return `
@@ -2141,10 +2535,127 @@
       `;
     }
 
+    function matrixSelection(value) {
+      if (value === "__current") {
+        return {
+          label: "当前参数",
+          config: normalizeConfig(config)
+        };
+      }
+      const version = configVersions.find(item => item.id === value);
+      if (!version) return null;
+      return {
+        label: version.name,
+        config: version.config
+      };
+    }
+
+    function quoteDepositForConfig(sourceConfig, agreements, billableLots, productKey) {
+      const p = findTier(
+        agreements,
+        sourceConfig.pTiers,
+        pLabel,
+        max => `超出适用范围（>${Math.floor(max)}份）`
+      );
+      const v = findTier(
+        billableLots,
+        sourceConfig.vTiers,
+        vLabel,
+        max => `超出适用范围（>${Math.round(max * 1000)}笔）`
+      );
+      const cValue = productKey === "complex" ? sourceConfig.cValues.complex : sourceConfig.cValues.simple;
+      return applyRoundingFor(sourceConfig, sourceConfig.baseDeposit * p.value * v.value * cValue);
+    }
+
+    function compareDiffClass(diff) {
+      if (diff > 0) return "up";
+      if (diff < 0) return "down";
+      return "flat";
+    }
+
+    function compareDiffText(diff) {
+      if (diff > 0) return `+${fmtPlain(diff, 0)}`;
+      if (diff < 0) return `-${fmtPlain(Math.abs(diff), 0)}`;
+      return "持平";
+    }
+
+    function matrixCompareTableHtml(optionA, optionB, productKey) {
+      const pTiers = sortedTiers(optionA.config.pTiers);
+      const vTiers = sortedTiers(optionA.config.vTiers);
+      if (!pTiers.length || !vTiers.length) {
+        return `<div class="empty-state">方案A缺少有效档位，无法生成对比矩阵。</div>`;
+      }
+      const head = vTiers.map((tier, index) => `<th>${vLabel(vTiers, index)}</th>`).join("");
+      const rows = pTiers.map((pTier, pIndex) => {
+        const agreements = Math.max(1, Math.floor(pTier.max));
+        const cells = vTiers.map(vTier => {
+          const billableLots = Math.max(1, vTier.max);
+          const valueA = quoteDepositForConfig(optionA.config, agreements, billableLots, productKey);
+          const valueB = quoteDepositForConfig(optionB.config, agreements, billableLots, productKey);
+          const diff = valueB - valueA;
+          return `
+            <td>
+              <div class="matrix-compare-value">
+                <b>A ${fmtPlain(valueA, 0)}</b>
+                <span>B ${fmtPlain(valueB, 0)}</span>
+                <em class="matrix-diff ${compareDiffClass(diff)}">${compareDiffText(diff)}</em>
+              </div>
+            </td>
+          `;
+        }).join("");
+        return `
+          <tr>
+            <td>${pLabel(pTiers, pIndex)}</td>
+            ${cells}
+          </tr>
+        `;
+      }).join("");
+
+      return `
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>协议数量 \\ 年度交易笔数</th>
+              ${head}
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function updateMatrixCompareDisplay() {
+      if (!els.simpleCompareMatrix || !els.complexCompareMatrix) return;
+      const optionA = matrixSelection(els.matrixVersionA.value || "__current");
+      const optionB = matrixSelection(els.matrixVersionB.value || "__current");
+      if (!configVersions.length) {
+        const empty = `<div class="empty-state">暂无保存版本。保存版本后，可在这里选择两套方案进行矩阵对比。</div>`;
+        els.simpleCompareMatrix.innerHTML = empty;
+        els.complexCompareMatrix.innerHTML = empty;
+        els.simpleCompareCaption.textContent = "等待保存版本。";
+        els.complexCompareCaption.textContent = "等待保存版本。";
+        return;
+      }
+      if (!optionA || !optionB) {
+        const empty = `<div class="empty-state">请选择两个有效方案。</div>`;
+        els.simpleCompareMatrix.innerHTML = empty;
+        els.complexCompareMatrix.innerHTML = empty;
+        els.simpleCompareCaption.textContent = "请选择两个有效方案。";
+        els.complexCompareCaption.textContent = "请选择两个有效方案。";
+        return;
+      }
+      const caption = `${optionA.label} vs ${optionB.label}；行列以方案A档位为基准，差额为B-A。`;
+      els.simpleCompareCaption.textContent = caption;
+      els.complexCompareCaption.textContent = caption;
+      els.simpleCompareMatrix.innerHTML = matrixCompareTableHtml(optionA, optionB, "simple");
+      els.complexCompareMatrix.innerHTML = matrixCompareTableHtml(optionA, optionB, "complex");
+    }
+
     function updateMatrixDisplay() {
       els.simpleMatrix.innerHTML = matrixTableHtml(config.cValues.simple);
       els.complexMatrix.innerHTML = matrixTableHtml(config.cValues.complex);
       els.matrixNote.textContent = `矩阵金额为建议年日均存款，单位万元；基础值${fmtPlain(config.baseDeposit, 0)}万元，取整规则为${roundRuleText()}。`;
+      updateMatrixCompareDisplay();
     }
 
     function updateRuleDisplay() {
@@ -2346,6 +2857,7 @@
     }
 
     writeConfigToControls(config);
+    renderVersionControls();
 
     document.addEventListener("input", event => {
       const target = event.target;
@@ -2382,6 +2894,12 @@
 
     els.reloadRemoteConfig.addEventListener("click", () => loadRemoteConfig(true));
     els.saveRemoteConfig.addEventListener("click", saveRemoteConfig);
+    els.saveVersion.addEventListener("click", saveConfigVersion);
+    els.loadVersion.addEventListener("click", loadSelectedVersion);
+    els.setDefaultVersion.addEventListener("click", setSelectedVersionAsDefault);
+    els.deleteVersion.addEventListener("click", deleteSelectedVersion);
+    els.matrixVersionA.addEventListener("change", updateMatrixCompareDisplay);
+    els.matrixVersionB.addEventListener("change", updateMatrixCompareDisplay);
 
     els.resetSettings.addEventListener("click", () => {
       config = clone(defaultConfig);
