@@ -346,6 +346,7 @@
     }
 
     input[type="number"],
+    input[type="password"],
     select {
       width: 100%;
       min-height: 42px;
@@ -640,6 +641,32 @@
       justify-content: flex-end;
       gap: 8px;
       padding-top: 2px;
+      flex-wrap: wrap;
+    }
+
+    .save-status {
+      display: flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 8px 10px;
+      border: 1px solid #e5e9f0;
+      border-radius: 6px;
+      background: #fbfcfe;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .save-status[data-status="ok"] {
+      border-color: #b7ead3;
+      background: #f3fbf7;
+      color: #057a55;
+    }
+
+    .save-status[data-status="error"] {
+      border-color: #fecaca;
+      background: #fff1f0;
+      color: var(--our-red);
     }
 
     .secondary-btn {
@@ -1407,7 +1434,23 @@
               </div>
             </div>
 
+            <div class="settings-group">
+              <h3>全局默认规则</h3>
+              <div class="settings-grid">
+                <div class="setting-field">
+                  <label for="configAdminToken">管理口令</label>
+                  <input id="configAdminToken" type="password" autocomplete="current-password" placeholder="保存时填写">
+                </div>
+                <div class="setting-field">
+                  <label for="configSaveStatus">保存状态</label>
+                  <div class="save-status" id="configSaveStatus" data-status="idle">打开网页时会自动读取线上默认规则。</div>
+                </div>
+              </div>
+            </div>
+
             <div class="settings-actions">
+              <button type="button" class="secondary-btn" id="reloadRemoteConfig">读取线上默认</button>
+              <button type="button" class="secondary-btn" id="saveRemoteConfig">保存为全局默认</button>
               <button type="button" class="secondary-btn" id="resetSettings">恢复默认参数</button>
             </div>
           </div>
@@ -1682,6 +1725,10 @@
       roundSwitchHint: document.getElementById("roundSwitchHint"),
       settingsToggle: document.getElementById("settingsToggle"),
       settingsBody: document.getElementById("settingsBody"),
+      configAdminToken: document.getElementById("configAdminToken"),
+      configSaveStatus: document.getElementById("configSaveStatus"),
+      reloadRemoteConfig: document.getElementById("reloadRemoteConfig"),
+      saveRemoteConfig: document.getElementById("saveRemoteConfig"),
       resetSettings: document.getElementById("resetSettings"),
       pTierRows: document.getElementById("pTierRows"),
       vTierRows: document.getElementById("vTierRows"),
@@ -1837,6 +1884,129 @@
       setInputValue("cfgFhtAgreement", source.fht.agreementUnit);
       setInputValue("cfgFhtSimple", source.fht.simpleValuationUnit);
       setInputValue("cfgFhtComplex", source.fht.complexValuationUnit);
+    }
+
+    function isPlainObject(value) {
+      return value && typeof value === "object" && !Array.isArray(value);
+    }
+
+    function numberOr(value, fallback, allowZero = true) {
+      const num = Number(value);
+      const min = allowZero ? 0 : Number.MIN_VALUE;
+      return Number.isFinite(num) && num >= min ? num : fallback;
+    }
+
+    function normalizeTiers(tiers, fallbackTiers) {
+      const source = Array.isArray(tiers) && tiers.length ? tiers : fallbackTiers;
+      return source.slice(0, 20).map((tier, index) => {
+        const fallback = fallbackTiers[Math.min(index, fallbackTiers.length - 1)] || { min: 0, max: 1, value: 1 };
+        const min = numberOr(tier && tier.min, fallback.min);
+        const max = Math.max(min, numberOr(tier && tier.max, fallback.max));
+        return {
+          min,
+          max,
+          value: numberOr(tier && tier.value, fallback.value)
+        };
+      });
+    }
+
+    function normalizeConfig(source) {
+      if (!isPlainObject(source)) return clone(defaultConfig);
+      const fallback = clone(defaultConfig);
+      return {
+        baseDeposit: numberOr(source.baseDeposit, fallback.baseDeposit),
+        rounding: {
+          method: ["floor", "ceil", "round"].includes(source.rounding && source.rounding.method)
+            ? source.rounding.method
+            : fallback.rounding.method,
+          unit: numberOr(source.rounding && source.rounding.unit, fallback.rounding.unit, false)
+        },
+        pTiers: normalizeTiers(source.pTiers, fallback.pTiers),
+        vTiers: normalizeTiers(source.vTiers, fallback.vTiers),
+        cValues: {
+          simple: numberOr(source.cValues && source.cValues.simple, fallback.cValues.simple),
+          complex: numberOr(source.cValues && source.cValues.complex, fallback.cValues.complex)
+        },
+        fht: {
+          setupFee: numberOr(source.fht && source.fht.setupFee, fallback.fht.setupFee),
+          agreementUnit: numberOr(source.fht && source.fht.agreementUnit, fallback.fht.agreementUnit),
+          simpleValuationUnit: numberOr(source.fht && source.fht.simpleValuationUnit, fallback.fht.simpleValuationUnit),
+          complexValuationUnit: numberOr(source.fht && source.fht.complexValuationUnit, fallback.fht.complexValuationUnit)
+        }
+      };
+    }
+
+    function setConfigStatus(message, status = "idle") {
+      els.configSaveStatus.textContent = message;
+      els.configSaveStatus.dataset.status = status;
+    }
+
+    function savedAtText(value) {
+      if (!value) return "";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "";
+      return `，保存时间：${date.toLocaleString("zh-CN", { hour12: false })}`;
+    }
+
+    async function loadRemoteConfig(showStatus = false) {
+      if (typeof fetch !== "function") {
+        setConfigStatus("当前环境无法连接线上配置，使用页面默认规则。");
+        return;
+      }
+      if (showStatus) setConfigStatus("正在读取线上默认规则...");
+      try {
+        const response = await fetch("/api/config", { cache: "no-store" });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || data.ok === false) {
+          throw new Error(data.error || "读取失败");
+        }
+        if (data.config) {
+          writeConfigToControls(normalizeConfig(data.config));
+          calc();
+          setConfigStatus(`已读取线上默认规则${savedAtText(data.updatedAt)}。`, "ok");
+        } else {
+          setConfigStatus("线上暂未保存默认规则，当前使用页面内置默认值。");
+        }
+      } catch (error) {
+        setConfigStatus(`未能读取线上默认规则：${error.message || "接口不可用"}。当前使用页面内置默认值。`, "error");
+      }
+    }
+
+    async function saveRemoteConfig() {
+      if (typeof fetch !== "function") {
+        setConfigStatus("当前环境无法保存到线上。", "error");
+        return;
+      }
+      const token = els.configAdminToken.value.trim();
+      if (!token) {
+        setConfigStatus("请先填写管理口令，再保存为全局默认。", "error");
+        return;
+      }
+      readConfigFromControls();
+      const currentConfig = normalizeConfig(config);
+      els.saveRemoteConfig.disabled = true;
+      setConfigStatus("正在保存为全局默认规则...");
+      try {
+        const response = await fetch("/api/config", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "x-admin-token": token
+          },
+          body: JSON.stringify({ config: currentConfig })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || data.ok === false) {
+          throw new Error(data.error || "保存失败");
+        }
+        writeConfigToControls(normalizeConfig(data.config || currentConfig));
+        calc();
+        setConfigStatus(`已保存为全局默认规则${savedAtText(data.updatedAt)}。`, "ok");
+      } catch (error) {
+        setConfigStatus(`保存失败：${error.message || "接口不可用"}。`, "error");
+      } finally {
+        els.saveRemoteConfig.disabled = false;
+      }
     }
 
     function fmtWan(value, digits = 1) {
@@ -2210,6 +2380,9 @@
       if (event.key === "Escape") setSettingsOpen(false);
     });
 
+    els.reloadRemoteConfig.addEventListener("click", () => loadRemoteConfig(true));
+    els.saveRemoteConfig.addEventListener("click", saveRemoteConfig);
+
     els.resetSettings.addEventListener("click", () => {
       config = clone(defaultConfig);
       writeConfigToControls(config);
@@ -2231,6 +2404,7 @@
     });
 
     calc();
+    loadRemoteConfig();
   </script>
 </body>
 </html>
