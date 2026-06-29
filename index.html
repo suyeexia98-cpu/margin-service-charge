@@ -606,7 +606,7 @@
     .settings-tier-head,
     .settings-tier-row {
       display: grid;
-      grid-template-columns: 72px 1fr 1fr;
+      grid-template-columns: 64px 1fr 1fr 1fr;
       gap: 8px;
       align-items: center;
     }
@@ -862,6 +862,82 @@
       gap: 18px;
     }
 
+    .matrix-stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .matrix-panel {
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .matrix-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .matrix-head h2 {
+      margin: 0;
+      color: var(--our-red);
+    }
+
+    .matrix-head span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: right;
+    }
+
+    .matrix-table-wrap {
+      overflow-x: auto;
+      border: 1px solid #edf0f5;
+      border-radius: 7px;
+      background: #fff;
+    }
+
+    .matrix-table {
+      min-width: 680px;
+      table-layout: auto;
+    }
+
+    .matrix-table th,
+    .matrix-table td {
+      min-width: 118px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .matrix-table th:first-child,
+    .matrix-table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      min-width: 150px;
+      text-align: left;
+      background: #fffafa;
+    }
+
+    .matrix-table thead th:first-child {
+      z-index: 2;
+      background: #fff1f0;
+    }
+
+    .matrix-value {
+      color: var(--our-red);
+      font-weight: 780;
+    }
+
+    .matrix-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
     .mini-table th,
     .mini-table td {
       padding: 8px;
@@ -925,7 +1001,7 @@
 
       .view-switch {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         width: 100%;
       }
 
@@ -1013,8 +1089,18 @@
 
       .settings-tier-head,
       .settings-tier-row {
-        grid-template-columns: 58px 1fr 1fr;
+        grid-template-columns: 52px 1fr 1fr 1fr;
         gap: 6px;
+      }
+
+      .matrix-head {
+        display: block;
+      }
+
+      .matrix-head span {
+        display: block;
+        margin-top: 6px;
+        text-align: left;
       }
     }
 
@@ -1122,6 +1208,7 @@
     <nav class="view-switch" aria-label="视图切换">
       <button type="button" class="view-tab active" data-view="rules">规则说明</button>
       <button type="button" class="view-tab" data-view="calculator">模拟计算器</button>
+      <button type="button" class="view-tab" data-view="matrix">报价矩阵</button>
     </nav>
 
     <section class="page-block active" data-view-panel="rules" aria-label="规则说明">
@@ -1133,7 +1220,7 @@
           </button>
           <h2>规则说明</h2>
         </div>
-        <span id="scopeSummary">适用范围：协议数量不超过50份，年度交易/估值处理量不超过5000笔。</span>
+        <span id="scopeSummary">适用范围：协议数量不超过80份，年度交易/估值处理量不超过5000笔。</span>
       </div>
 
       <div class="rules-grid">
@@ -1150,8 +1237,8 @@
             <tbody>
               <tr>
                 <td class="left">协议数量</td>
-                <td id="scopeAgreementLimit">50份以内</td>
-                <td id="scopeAgreementOverflow">超过50份时另行评估</td>
+                <td id="scopeAgreementLimit">80份以内</td>
+                <td id="scopeAgreementOverflow">超过80份时另行评估</td>
               </tr>
               <tr>
                 <td class="left">交易/估值处理量</td>
@@ -1258,7 +1345,8 @@
               <h3>协议覆盖系数 P</h3>
               <div class="settings-tier-head">
                 <span>档位</span>
-                <span>上限（份）</span>
+                <span>起点（份）</span>
+                <span>终点（份）</span>
                 <span>系数</span>
               </div>
               <div id="pTierRows"></div>
@@ -1272,7 +1360,8 @@
               <h3>估值活跃系数 V</h3>
               <div class="settings-tier-head">
                 <span>档位</span>
-                <span>上限（千笔）</span>
+                <span>起点（笔）</span>
+                <span>终点（笔）</span>
                 <span>系数</span>
               </div>
               <div id="vTierRows"></div>
@@ -1291,7 +1380,7 @@
                 </div>
                 <div class="setting-field">
                   <label for="cfgCComplex">含复杂衍生品</label>
-                  <input id="cfgCComplex" data-config-input type="number" min="0" step="0.1" value="2.5">
+                  <input id="cfgCComplex" data-config-input type="number" min="0" step="0.1" value="1.5">
                 </div>
               </div>
             </div>
@@ -1342,7 +1431,7 @@
             协议数量
             <span class="hint">份</span>
           </label>
-          <input id="agreementCount" type="number" min="0" max="50" step="1" value="25">
+          <input id="agreementCount" type="number" min="0" max="80" step="1" value="25">
         </div>
 
         <div class="field">
@@ -1389,7 +1478,7 @@
         <div class="formula">
           <strong>我方算法</strong>
           <code id="ourFormulaText">M = 500万元 × P × V × C</code>
-          <span id="ourFormulaHint">C仅分为简单产品1.0、含复杂衍生品2.5。</span>
+          <span id="ourFormulaHint">C仅分为简单产品1.0、含复杂衍生品1.5。</span>
         </div>
 
         <div class="formula">
@@ -1510,6 +1599,33 @@
       </section>
     </div>
     </section>
+
+    <section class="page-block" data-view-panel="matrix" aria-label="报价矩阵">
+      <div class="page-title">
+        <h2>报价矩阵</h2>
+        <span>根据当前我方规则自动生成，金额口径为建议年日均存款要求。</span>
+      </div>
+
+      <div class="matrix-stack">
+        <section class="panel matrix-panel our-panel" aria-label="简单产品报价矩阵">
+          <div class="matrix-head">
+            <h2>简单产品</h2>
+            <span>单位：万元；按当前参数设置中的取整规则生成。</span>
+          </div>
+          <div class="matrix-table-wrap" id="simpleMatrix"></div>
+        </section>
+
+        <section class="panel matrix-panel our-panel" aria-label="含复杂衍生品报价矩阵">
+          <div class="matrix-head">
+            <h2>含复杂衍生品</h2>
+            <span>单位：万元；产品复杂系数按当前参数设置取值。</span>
+          </div>
+          <div class="matrix-table-wrap" id="complexMatrix"></div>
+        </section>
+      </div>
+
+      <div class="matrix-note" id="matrixNote">--</div>
+    </section>
   </main>
 
   <script>
@@ -1520,20 +1636,19 @@
         unit: 100
       },
       pTiers: [
-        { max: 10, value: 0.8 },
-        { max: 20, value: 1.0 },
-        { max: 30, value: 1.2 },
-        { max: 50, value: 1.5 }
+        { min: 1, max: 20, value: 1.0 },
+        { min: 21, max: 40, value: 1.2 },
+        { min: 41, max: 60, value: 1.4 },
+        { min: 60, max: 80, value: 1.6 }
       ],
       vTiers: [
-        { max: 1, value: 1.2 },
-        { max: 2, value: 1.6 },
-        { max: 3, value: 2.0 },
-        { max: 5, value: 2.5 }
+        { min: 0, max: 1, value: 1.0 },
+        { min: 1.001, max: 3, value: 1.6 },
+        { min: 3.001, max: 5, value: 2.0 }
       ],
       cValues: {
         simple: 1.0,
-        complex: 2.5
+        complex: 1.5
       },
       fht: {
         setupFee: 2.4,
@@ -1602,7 +1717,10 @@
       fhtSetupUnitCell: document.getElementById("fhtSetupUnitCell"),
       fhtSetupFee: document.getElementById("fhtSetupFee"),
       fhtTotalFee: document.getElementById("fhtTotalFee"),
-      setupRow: document.getElementById("setupRow")
+      setupRow: document.getElementById("setupRow"),
+      simpleMatrix: document.getElementById("simpleMatrix"),
+      complexMatrix: document.getElementById("complexMatrix"),
+      matrixNote: document.getElementById("matrixNote")
     };
 
     function clone(value) {
@@ -1626,29 +1744,44 @@
       return Number.isFinite(num) && num > 0 ? num : fallback;
     }
 
-    function tierRowsHtml(prefix, tiers, maxMin, maxStep) {
+    function displayBound(prefix, value) {
+      return prefix === "V" ? Math.round(value * 1000) : Math.round(value);
+    }
+
+    function tierRowsHtml(prefix, tiers, options) {
+      const { boundMin, boundStep } = options;
       return tiers.map((tier, index) => `
         <div class="settings-tier-row">
           <span class="tier-label">第${index + 1}档</span>
-          <input id="cfg${prefix}${index + 1}Max" data-config-input type="number" min="${maxMin}" step="${maxStep}" value="${tier.max}">
+          <input id="cfg${prefix}${index + 1}Min" data-config-input type="number" min="${boundMin}" step="${boundStep}" value="${displayBound(prefix, tier.min)}">
+          <input id="cfg${prefix}${index + 1}Max" data-config-input type="number" min="${boundMin}" step="${boundStep}" value="${displayBound(prefix, tier.max)}">
           <input id="cfg${prefix}${index + 1}Value" data-config-input type="number" min="0" step="0.1" value="${tier.value}">
         </div>
       `).join("");
     }
 
     function renderTierControls() {
-      els.pTierRows.innerHTML = tierRowsHtml("P", config.pTiers, 1, 1);
-      els.vTierRows.innerHTML = tierRowsHtml("V", config.vTiers, 0.1, 0.1);
+      els.pTierRows.innerHTML = tierRowsHtml("P", config.pTiers, { boundMin: 0, boundStep: 1 });
+      els.vTierRows.innerHTML = tierRowsHtml("V", config.vTiers, { boundMin: 0, boundStep: 1 });
       els.removePTier.disabled = config.pTiers.length <= 1;
       els.removeVTier.disabled = config.vTiers.length <= 1;
     }
 
-    function readTierGroup(prefix, tiers, integerMax = false) {
+    function readTierGroup(prefix, tiers, options = {}) {
+      const { integerBounds = false, scale = 1 } = options;
       return tiers.map((tier, index) => {
         const row = index + 1;
-        const rawMax = readPositive(`cfg${prefix}${row}Max`, tier.max);
+        const fallbackMin = displayBound(prefix, tier.min);
+        const fallbackMax = displayBound(prefix, tier.max);
+        const rawMin = readNonNegative(`cfg${prefix}${row}Min`, fallbackMin);
+        const rawMax = readPositive(`cfg${prefix}${row}Max`, fallbackMax);
+        const minBound = integerBounds ? Math.floor(rawMin) : rawMin;
+        const maxBound = integerBounds ? Math.floor(rawMax) : rawMax;
+        const safeMin = Math.max(0, minBound);
+        const safeMax = Math.max(safeMin, maxBound);
         return {
-          max: integerMax ? Math.max(1, Math.floor(rawMax)) : rawMax,
+          min: safeMin / scale,
+          max: safeMax / scale,
           value: readNonNegative(`cfg${prefix}${row}Value`, tier.value)
         };
       });
@@ -1662,8 +1795,8 @@
           method: roundMethodEl ? roundMethodEl.value : defaultConfig.rounding.method,
           unit: readPositive("cfgRoundUnit", defaultConfig.rounding.unit)
         },
-        pTiers: readTierGroup("P", config.pTiers, true),
-        vTiers: readTierGroup("V", config.vTiers, false),
+        pTiers: readTierGroup("P", config.pTiers, { integerBounds: true, scale: 1 }),
+        vTiers: readTierGroup("V", config.vTiers, { integerBounds: true, scale: 1000 }),
         cValues: {
           simple: readNonNegative("cfgCSimple", defaultConfig.cValues.simple),
           complex: readNonNegative("cfgCComplex", defaultConfig.cValues.complex)
@@ -1689,11 +1822,13 @@
       setInputValue("cfgRoundMethod", source.rounding.method);
       setInputValue("cfgRoundUnit", source.rounding.unit);
       source.pTiers.forEach((tier, index) => {
-        setInputValue(`cfgP${index + 1}Max`, tier.max);
+        setInputValue(`cfgP${index + 1}Min`, displayBound("P", tier.min));
+        setInputValue(`cfgP${index + 1}Max`, displayBound("P", tier.max));
         setInputValue(`cfgP${index + 1}Value`, tier.value);
       });
       source.vTiers.forEach((tier, index) => {
-        setInputValue(`cfgV${index + 1}Max`, tier.max);
+        setInputValue(`cfgV${index + 1}Min`, displayBound("V", tier.min));
+        setInputValue(`cfgV${index + 1}Max`, displayBound("V", tier.max));
         setInputValue(`cfgV${index + 1}Value`, tier.value);
       });
       setInputValue("cfgCSimple", source.cValues.simple);
@@ -1720,7 +1855,12 @@
     }
 
     function sortedTiers(tiers) {
-      return [...tiers].sort((a, b) => a.max - b.max);
+      return [...tiers].sort((a, b) => {
+        const aMin = Number.isFinite(a.min) ? a.min : 0;
+        const bMin = Number.isFinite(b.min) ? b.min : 0;
+        if (aMin !== bMin) return aMin - bMin;
+        return a.max - b.max;
+      });
     }
 
     function maxTierValue(tiers) {
@@ -1730,25 +1870,42 @@
 
     function pLabel(tiers, index) {
       const tier = tiers[index];
-      const prevMax = index === 0 ? 0 : tiers[index - 1].max;
-      return `${Math.floor(prevMax) + 1}-${Math.floor(tier.max)}份`;
+      const lower = Math.floor(Number.isFinite(tier.min) ? tier.min : 0);
+      const upper = Math.floor(tier.max);
+      if (lower <= 1) return `${upper}份以内`;
+      return `${lower}-${upper}份`;
     }
 
     function vLabel(tiers, index) {
       const tier = tiers[index];
-      const prevMax = index === 0 ? 0 : tiers[index - 1].max;
+      const lower = Math.round((Number.isFinite(tier.min) ? tier.min : 0) * 1000);
       const upper = Math.round(tier.max * 1000);
-      if (index === 0) return `${upper}笔以内`;
-      return `${Math.round(prevMax * 1000) + 1}-${upper}笔`;
+      if (lower <= 1) return `${upper}笔以内`;
+      return `${lower}-${upper}笔`;
     }
 
     function findTier(value, tiers, labelFn, overflowText) {
       const sorted = sortedTiers(tiers);
       for (let index = 0; index < sorted.length; index += 1) {
-        if (value <= sorted[index].max) {
+        const min = Number.isFinite(sorted[index].min) ? sorted[index].min : 0;
+        if (value >= min && value <= sorted[index].max) {
           return {
             value: sorted[index].value,
             bucket: labelFn(sorted, index)
+          };
+        }
+      }
+      if (sorted.length && value < (Number.isFinite(sorted[0].min) ? sorted[0].min : 0)) {
+        return {
+          value: sorted[0].value,
+          bucket: labelFn(sorted, 0)
+        };
+      }
+      for (let index = 0; index < sorted.length; index += 1) {
+        if (value <= sorted[index].max) {
+          return {
+            value: sorted[index].value,
+            bucket: `${labelFn(sorted, index)}（区间未连续）`
           };
         }
       }
@@ -1781,6 +1938,43 @@
       return items.map(item => `
         <div class="coef-item"><span>${item.label}</span><b>${item.value}</b></div>
       `).join("");
+    }
+
+    function matrixTableHtml(cValue) {
+      const pTiers = sortedTiers(config.pTiers);
+      const vTiers = sortedTiers(config.vTiers);
+      const head = vTiers.map((tier, index) => `<th>${vLabel(vTiers, index)}</th>`).join("");
+      const rows = pTiers.map((pTier, pIndex) => {
+        const cells = vTiers.map(vTier => {
+          const rawDeposit = config.baseDeposit * pTier.value * vTier.value * cValue;
+          const quotedDeposit = applyRounding(rawDeposit);
+          return `<td><span class="matrix-value">${fmtPlain(quotedDeposit, 0)}</span></td>`;
+        }).join("");
+        return `
+          <tr>
+            <td>${pLabel(pTiers, pIndex)}</td>
+            ${cells}
+          </tr>
+        `;
+      }).join("");
+
+      return `
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>协议数量 \\ 年度交易笔数</th>
+              ${head}
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function updateMatrixDisplay() {
+      els.simpleMatrix.innerHTML = matrixTableHtml(config.cValues.simple);
+      els.complexMatrix.innerHTML = matrixTableHtml(config.cValues.complex);
+      els.matrixNote.textContent = `矩阵金额为建议年日均存款，单位万元；基础值${fmtPlain(config.baseDeposit, 0)}万元，取整规则为${roundRuleText()}。`;
     }
 
     function updateRuleDisplay() {
@@ -1826,6 +2020,7 @@
       els.fhtFormulaHint.textContent = `简单估值单价${fmtPlain(config.fht.simpleValuationUnit, 2)}万元/千笔；复杂估值单价${fmtPlain(config.fht.complexValuationUnit, 2)}万元/千笔。`;
       els.fhtAgreementUnitCell.textContent = `${fmtPlain(config.fht.agreementUnit, 2)}万元/份`;
       els.fhtSetupUnitCell.textContent = `${fmtPlain(config.fht.setupFee, 2)}万元`;
+      updateMatrixDisplay();
     }
 
     function getP(agreements) {
@@ -1953,11 +2148,20 @@
       readConfigFromControls();
       const tiers = kind === "P" ? config.pTiers : config.vTiers;
       const sorted = sortedTiers(tiers);
-      const last = sorted[sorted.length - 1] || { max: kind === "P" ? 10 : 1, value: 1 };
-      const nextMax = kind === "P"
-        ? Math.floor(last.max) + 10
-        : Number((last.max + 1).toFixed(1));
-      tiers.push({ max: nextMax, value: last.value });
+      const last = sorted[sorted.length - 1] || { min: 0, max: kind === "P" ? 10 : 1, value: 1 };
+      if (kind === "P") {
+        const lastMin = Math.floor(Number.isFinite(last.min) ? last.min : 0);
+        const lastMax = Math.floor(last.max);
+        const span = Math.max(1, lastMax - lastMin + 1);
+        const nextMin = lastMax + 1;
+        tiers.push({ min: nextMin, max: nextMin + span - 1, value: last.value });
+      } else {
+        const lastMin = Math.round((Number.isFinite(last.min) ? last.min : 0) * 1000);
+        const lastMax = Math.round(last.max * 1000);
+        const span = Math.max(1, lastMax - lastMin + 1);
+        const nextMin = lastMax + 1;
+        tiers.push({ min: nextMin / 1000, max: (nextMin + span - 1) / 1000, value: last.value });
+      }
       writeConfigToControls(config);
       calc();
     }
@@ -2019,7 +2223,7 @@
       document.querySelectorAll("[data-view-panel]").forEach(panel => {
         panel.classList.toggle("active", panel.dataset.viewPanel === view);
       });
-      if (view === "calculator") calc();
+      if (view === "calculator" || view === "matrix") calc();
     }
 
     document.querySelectorAll("[data-view]").forEach(tab => {
